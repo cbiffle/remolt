@@ -1097,17 +1097,16 @@ pub fn cmd_string_compare(_interp: &mut Interp, argv: &[Value]) -> MoltOptResult
         }
     }
 
+    let val1 = &argv[arglen - 2];
+    let val2 = &argv[arglen - 1];
     if nocase {
-        let val1 = &argv[arglen - 2];
-        let val2 = &argv[arglen - 1];
-
         // TODO: *Not* the best way to do this; consider using the unicase crate.
-        let val1 = Value::from(util::to_lowercase(val1.as_str()));
-        let val2 = Value::from(util::to_lowercase(val2.as_str()));
+        let val1 = util::to_lowercase(val1.as_str());
+        let val2 = util::to_lowercase(val2.as_str());
 
-        molt_opt_ok!(util::compare_len(val1.as_str(), val2.as_str(), length)?)
+        molt_opt_ok!(util::compare_len(&val1, &val2, length))
     } else {
-        molt_opt_ok!(util::compare_len(argv[arglen - 2].as_str(), argv[arglen - 1].as_str(), length)?)
+        molt_opt_ok!(util::compare_len(val1.as_str(), val2.as_str(), length))
     }
 }
 
@@ -1147,10 +1146,10 @@ pub fn cmd_string_equal(_interp: &mut Interp, argv: &[Value]) -> MoltOptResult {
         let val1 = Value::from(util::to_lowercase(val1.as_str()));
         let val2 = Value::from(util::to_lowercase(val2.as_str()));
 
-        let flag = util::compare_len(val1.as_str(), val2.as_str(), length)? == 0;
+        let flag = util::compare_len(val1.as_str(), val2.as_str(), length) == 0;
         molt_opt_ok!(flag)
     } else {
-        let flag = util::compare_len(argv[arglen - 2].as_str(), argv[arglen - 1].as_str(), length)? == 0;
+        let flag = util::compare_len(argv[arglen - 2].as_str(), argv[arglen - 1].as_str(), length) == 0;
         molt_opt_ok!(flag)
     }
 }
