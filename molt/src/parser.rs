@@ -413,7 +413,7 @@ pub(crate) fn parse_varname(ctx: &mut EvalPtr) -> Result<Word, Exception> {
     if ctx.next_is('{') {
         ctx.skip_char('{');
         let start = ctx.mark();
-        ctx.skip_while(|ch| *ch != '}');
+        ctx.skip_while(|ch| ch != '}');
 
         if ctx.at_end() {
             return molt_err!("missing close-brace for variable name");
@@ -430,7 +430,7 @@ pub(crate) fn parse_varname(ctx: &mut EvalPtr) -> Result<Word, Exception> {
         }
     } else {
         let start = ctx.mark();
-        ctx.skip_while(|ch| is_varname_char(*ch));
+        ctx.skip_while(is_varname_char);
         let name = ctx.token(start).to_string();
 
         if !ctx.next_is('(') {
@@ -457,7 +457,7 @@ pub(crate) fn parse_varname_literal(literal: &str) -> VarName {
     // FIRST, find the first open parenthesis.  If there is none, just return the literal
     // as a scalar.
     let start = ctx.mark();
-    ctx.skip_while(|ch| *ch != '(');
+    ctx.skip_while(|ch| ch != '(');
 
     if ctx.at_end() {
         return VarName::scalar(literal.into());

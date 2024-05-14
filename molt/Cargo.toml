@@ -16,15 +16,40 @@ indexmap = {version = "1.3.0", default-features = false}
 [features]
 default = [
     "dict", "float", "i64", "error-stack-trace", "internals", "std", "info",
-    "expr", "closure-commands", "string-command",
+    "expr", "closure-commands", "string-command", "unicode-case",
+    "unicode-whitespace", "unicode-alphanum",
 ]
+# Include the dict type and dict command for manipulating it. ~8 kiB
 dict = []
+# Include floating point numbers, parsing, and arithmetic. ~48 kiB
 float = []
+# Use 64-bit integers (when omitted, integers are 32-bit). ~3 kiB
 i64 = []
+# Collect stack trace information on errors. ~1 kiB plus burning more RAM to
+# record the stack traces at runtime.
 error-stack-trace = []
+# Include "debugging tool" commands specific to Molt. ~6 kiB
 internals = []
+# Include the info command. ~3 kiB
 info = []
+# Include expr command and expression parsing more generally. If omitted,
+# commands like if and while no longer parse expressions and must instead be
+# given explicit commands to run. Omitting this makes the language a _lot_ less
+# useful. ~11 kiB
 expr = []
+# Allow commands to be registered as boxed closures in addition to function
+# pointers. < 1 kiB
 closure-commands = []
+# Include the string command. ~9 kiB, bigger when all unicode features are on.
 string-command = []
+# Correctly handle all scripts in upper/lower case transforms and
+# case-insensitive comparisons. ~16 kiB.
+unicode-case = []
+# Allow any Unicode whitespace characters to appear where space is expected
+# during parsing and evaluation. Relatively cheap, ~1 kiB.
+unicode-whitespace = []
+# Allow any Unicode alpha/numeric character to appear in identifiers and
+# numbers. ~2.5 kiB
+unicode-alphanum = []
+# Assume the standard library is available.
 std = []

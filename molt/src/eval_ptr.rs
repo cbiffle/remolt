@@ -5,7 +5,7 @@
 //! * Consider delegating skip_while() to iter::skip_while(), and replacing the
 //!   "skip_sequence" methods with some useful predicate functions.
 
-use crate::tokenizer::Tokenizer;
+use crate::{tokenizer::Tokenizer, util};
 
 /// A struct that holds the parsing context: the iterator over the input string, and
 /// any relevant flags.
@@ -111,7 +111,7 @@ impl<'a> EvalPtr<'a> {
     /// Skips over characters while the predicate is true.  Updates the index.
     pub fn skip_while<P>(&mut self, predicate: P)
     where
-        P: Fn(&char) -> bool,
+        P: Fn(char) -> bool,
     {
         self.tok.skip_while(predicate);
     }
@@ -154,7 +154,7 @@ impl<'a> EvalPtr<'a> {
     /// Is the current character is a valid whitespace character, including newlines?
     pub fn next_is_block_white(&mut self) -> bool {
         match self.tok.peek() {
-            Some(c) => c.is_ascii_whitespace(),
+            Some(c) => util::is_whitespace(c),
             None => false,
         }
     }
@@ -162,7 +162,7 @@ impl<'a> EvalPtr<'a> {
     /// Is the current character is a valid whitespace character, excluding newlines?
     pub fn next_is_line_white(&mut self) -> bool {
         match self.tok.peek() {
-            Some(c) => c.is_ascii_whitespace() && c != '\n',
+            Some(c) => util::is_whitespace(c) && c != '\n',
             None => false,
         }
     }

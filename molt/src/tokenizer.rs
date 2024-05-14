@@ -104,9 +104,9 @@ impl<'a> Tokenizer<'a> {
     /// Is the predicate true for the next character? Does not update the index.
     pub fn has<P>(&mut self, predicate: P) -> bool
     where
-        P: Fn(&char) -> bool,
+        P: Fn(char) -> bool,
     {
-        if let Some(ch) = self.chars.peek() {
+        if let Some(ch) = self.chars.peek().copied() {
             predicate(ch)
         } else {
             false
@@ -143,9 +143,9 @@ impl<'a> Tokenizer<'a> {
     /// Skips over characters while the predicate is true.  Updates the index.
     pub fn skip_while<P>(&mut self, predicate: P)
     where
-        P: Fn(&char) -> bool,
+        P: Fn(char) -> bool,
     {
-        while let Some(ch) = self.chars.peek() {
+        while let Some(ch) = self.chars.peek().copied() {
             if predicate(ch) {
                 self.next();
             } else {
@@ -236,6 +236,8 @@ impl<'a> Tokenizer<'a> {
 
 #[cfg(test)]
 mod tests {
+    use crate::util;
+
     use super::*;
 
     #[test]
@@ -335,11 +337,11 @@ mod tests {
     #[test]
     fn test_has() {
         let mut ptr = Tokenizer::new("a1");
-        assert!(ptr.has(|c| c.is_ascii_alphabetic()));
+        assert!(ptr.has(util::is_alphabetic));
         ptr.skip();
-        assert!(!ptr.has(|c| c.is_ascii_alphabetic()));
+        assert!(!ptr.has(util::is_alphabetic));
         ptr.skip();
-        assert!(!ptr.has(|c| c.is_ascii_alphabetic()));
+        assert!(!ptr.has(util::is_alphabetic));
     }
 
     #[test]
@@ -383,12 +385,12 @@ mod tests {
     #[test]
     fn test_skip_while() {
         let mut ptr = Tokenizer::new("aaabc");
-        ptr.skip_while(|ch| *ch == 'a');
+        ptr.skip_while(|ch| ch == 'a');
         assert_eq!(ptr.peek(), Some('b'));
         assert_eq!(ptr.as_str(), "bc");
 
         let mut ptr = Tokenizer::new("aaa");
-        ptr.skip_while(|ch| *ch == 'a');
+        ptr.skip_while(|ch| ch == 'a');
         assert_eq!(ptr.peek(), None);
         assert_eq!(ptr.as_str(), "");
     }

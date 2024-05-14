@@ -588,7 +588,7 @@ impl Value {
     /// ```
     pub fn get_bool(arg: &str) -> Result<bool, Exception> {
         let orig = arg;
-        let value: &str = &arg.trim_matches(util::is_ascii_whitespace).to_ascii_lowercase();
+        let value: &str = &util::to_lowercase(arg.trim_matches(util::is_whitespace));
         match value {
             "1" | "true" | "yes" | "on" => Ok(true),
             "0" | "false" | "no" | "off" => Ok(false),
@@ -724,7 +724,7 @@ impl Value {
     /// ```
     pub fn get_int(arg: &str) -> Result<MoltInt, Exception> {
         let orig = arg;
-        let mut arg = arg.trim_matches(util::is_ascii_whitespace);
+        let mut arg = arg.trim_matches(util::is_whitespace);
         let mut minus = 1;
 
         if arg.starts_with('+') {
@@ -803,7 +803,7 @@ impl Value {
     /// ```
     #[cfg(feature = "float")]
     pub fn get_float(arg: &str) -> Result<MoltFloat, Exception> {
-        let arg_trim = arg.trim_matches(util::is_ascii_whitespace).to_ascii_lowercase();
+        let arg_trim = util::to_lowercase(arg.trim_matches(util::is_whitespace));
 
         match arg_trim.parse::<MoltFloat>() {
             Ok(flt) => Ok(flt),
@@ -1582,7 +1582,7 @@ mod tests {
         type Err = String;
 
         fn from_str(value: &str) -> Result<Self, Self::Err> {
-            let value = value.to_ascii_lowercase();
+            let value = util::to_lowercase(value);
 
             if value == "salty" {
                 Ok(Flavor::SALTY)

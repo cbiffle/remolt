@@ -862,7 +862,7 @@ fn expr_lex(interp: &mut Interp, info: &mut ExprInfo) -> DatumResult {
     // FIRST, skip white space.
     let mut p = info.expr.clone();
 
-    p.skip_while(|c| c.is_ascii_whitespace());
+    p.skip_while(util::is_whitespace);
 
     if p.at_end() {
         info.token = END;
@@ -1085,9 +1085,9 @@ fn expr_lex(interp: &mut Interp, info: &mut ExprInfo) -> DatumResult {
             Ok(Datum::none())
         }
         Some(_) => {
-            if p.has(|c| c.is_ascii_alphabetic()) {
+            if p.has(util::is_alphabetic) {
                 let mut str = String::new();
-                while p.has(|c| c.is_ascii_alphabetic() || c.is_ascii_digit()) {
+                while p.has(util::is_alphanumeric) {
                     str.push(p.next().unwrap());
                 }
 
@@ -1342,7 +1342,7 @@ fn expr_parse_string(string: &str) -> DatumResult {
 
         if expr_looks_like_int(&p) {
             // FIRST, skip leading whitespace.
-            p.skip_while(|c| c.is_ascii_whitespace());
+            p.skip_while(util::is_whitespace);
 
             // NEXT, get the integer token from it.  We know there has to be something,
             // since it "looks like int".
@@ -1350,7 +1350,7 @@ fn expr_parse_string(string: &str) -> DatumResult {
 
             // NEXT, did we read the whole string?  If not, it isn't really an integer.
             // Otherwise, drop through and return it as a string.
-            p.skip_while(|c| c.is_ascii_whitespace());
+            p.skip_while(util::is_whitespace);
 
             if p.at_end() {
                 // Can return an error if the number is too long to represent as a
@@ -1362,13 +1362,13 @@ fn expr_parse_string(string: &str) -> DatumResult {
             #[cfg(feature = "float")]
             {
                 // FIRST, see if it's a double. Skip leading whitespace.
-                p.skip_while(|c| c.is_ascii_whitespace());
+                p.skip_while(util::is_whitespace);
 
                 // NEXT, see if we can get a float token from it.
                 if let Some(token) = util::read_float(&mut p) {
                     // Did we read the whole string?  If not, it isn't really a float.
                     // Otherwise, drop through and return it as a string.
-                    p.skip_while(|c| c.is_ascii_whitespace());
+                    p.skip_while(util::is_whitespace);
 
                     if p.at_end() {
                         // Can theoretically return an error.  This is consistent with
@@ -1398,7 +1398,7 @@ fn expr_as_str(value: Datum) -> Datum {
 fn expr_looks_like_int(ptr: &Tokenizer<'_>) -> bool {
     // FIRST, skip whitespace
     let mut p = ptr.clone();
-    p.skip_while(|c| c.is_ascii_whitespace());
+    p.skip_while(util::is_whitespace);
 
     if p.is('+') || p.is('-') {
         p.skip();

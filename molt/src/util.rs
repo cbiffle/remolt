@@ -10,14 +10,58 @@ use core::cmp::Ordering;
 use alloc::string::String;
 
 pub fn is_varname_char(ch: char) -> bool {
-    ch.is_ascii_alphanumeric() || ch == '_'
+    is_alphanumeric(ch) || ch == '_'
 }
 
-pub fn is_ascii_whitespace(ch: char) -> bool {
-    // For reasons I cannot fathom, is_ascii_whitespace takes &self, unlike
-    // is_whitespace, making it incompatible with trim_matches. This wrapper
-    // function solves this.
-    ch.is_ascii_whitespace()
+pub fn is_alphabetic(ch: char) -> bool {
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "unicode-alphanum")] {
+            ch.is_alphabetic()
+        } else {
+            ch.is_ascii_alphabetic()
+        }
+    }
+}
+
+pub fn is_alphanumeric(ch: char) -> bool {
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "unicode-alphanum")] {
+            ch.is_alphanumeric()
+        } else {
+            ch.is_ascii_alphanumeric()
+        }
+    }
+}
+
+pub fn is_whitespace(ch: char) -> bool {
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "unicode-whitespace")] {
+            ch.is_whitespace()
+        } else {
+            ch.is_ascii_whitespace()
+        }
+    }
+}
+
+pub fn to_lowercase(s: &str) -> String {
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "unicode-case")] {
+            s.to_lowercase()
+        } else {
+            s.to_ascii_lowercase()
+        }
+    }
+}
+
+#[cfg(feature = "string-command")]
+pub fn to_uppercase(s: &str) -> String {
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "unicode-case")] {
+            s.to_uppercase()
+        } else {
+            s.to_ascii_uppercase()
+        }
+    }
 }
 
 /// Reads the integer string from the head of the input.  If the function returns `Some`,

@@ -1,6 +1,6 @@
 //! TCL List Parsing and Formatting
 
-use crate::molt_err;
+use crate::{molt_err, util};
 use crate::tokenizer::Tokenizer;
 use crate::types::*;
 use crate::value::Value;
@@ -34,7 +34,7 @@ fn is_list_white(ch: char) -> bool {
 
 fn parse_list(ctx: &mut Tokenizer) -> Result<MoltList, Exception> {
     // FIRST, skip any list whitespace.
-    ctx.skip_while(|ch| is_list_white(*ch));
+    ctx.skip_while(is_list_white);
 
     // Read words until we get to the end of the input or hit an error
     let mut items = Vec::new();
@@ -44,7 +44,7 @@ fn parse_list(ctx: &mut Tokenizer) -> Result<MoltList, Exception> {
         items.push(parse_item(ctx)?);
 
         // NEXT, skip whitespace to the end or the next item.
-        ctx.skip_while(|ch| is_list_white(*ch));
+        ctx.skip_while(is_list_white);
     }
 
     // NEXT, return the items.
@@ -97,7 +97,7 @@ fn parse_braced_item(ctx: &mut Tokenizer) -> MoltResult {
                 let result = Ok(Value::from(ctx.token(mark).to_string()));
                 ctx.skip(); // Skip the closing brace
 
-                if ctx.at_end() || ctx.has(|ch| is_list_white(*ch)) {
+                if ctx.at_end() || ctx.has(is_list_white) {
                     return result;
                 } else {
                     return molt_err!("extra characters after close-brace");
@@ -121,7 +121,7 @@ fn parse_quoted_item(ctx: &mut Tokenizer) -> MoltResult {
     let mut start = ctx.mark();
 
     while !ctx.at_end() {
-        ctx.skip_while(|ch| *ch != '"' && *ch != '\\');
+        ctx.skip_while(|ch| ch != '"' && ch != '\\');
         item.push_str(ctx.token(start));
 
         match ctx.peek() {
@@ -147,12 +147,12 @@ fn parse_bare_item(ctx: &mut Tokenizer) -> MoltResult {
 
     while !ctx.at_end() {
         // Note: the while condition ensures that there's a character.
-        ctx.skip_while(|ch| !is_list_white(*ch) && *ch != '\\');
+        ctx.skip_while(|ch| !is_list_white(ch) && ch != '\\');
 
         item.push_str(ctx.token(start));
         start = ctx.mark();
 
-        if ctx.has(|ch| is_list_white(*ch)) {
+        if ctx.has(is_list_white) {
             break;
         }
 
@@ -216,7 +216,7 @@ fn escape_item(hash: bool, item: &str, out: &mut String) {
     }
 
     for ch in item.chars() {
-        if ch.is_ascii_whitespace() {
+        if util::is_whitespace(ch) {
             out.push('\\');
             out.push(ch);
             continue;
@@ -252,7 +252,7 @@ fn get_mode(word: &str) -> Mode {
     let mut iter = word.chars().peekable();
 
     while let Some(ch) = iter.next() {
-        if ch.is_ascii_whitespace() {
+        if util::is_whitespace(ch) {
             mode = Mode::Brace;
             continue;
         }
