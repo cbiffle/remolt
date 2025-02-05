@@ -53,3 +53,10 @@ unicode-whitespace = []
 unicode-alphanum = []
 # Assume the standard library is available.
 std = []
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "basic"
+harness = false
