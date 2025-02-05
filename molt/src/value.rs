@@ -817,9 +817,9 @@ impl Value {
     /// the same floating point numbers.
     #[cfg(feature = "float")]
     fn fmt_float(f: &mut core::fmt::Formatter, flt: MoltFloat) -> core::fmt::Result {
-        if flt == core::f64::INFINITY {
+        if flt == f64::INFINITY {
             write!(f, "Inf")
-        } else if flt == core::f64::NEG_INFINITY {
+        } else if flt == f64::NEG_INFINITY {
             write!(f, "-Inf")
         } else if flt.is_nan() {
             write!(f, "NaN")
@@ -979,9 +979,9 @@ impl Value {
     /// See [`Value::as_other`](#method.as_other) and
     /// [`Value::as_copy`](#method.as_copy) for examples of how to
     /// retrieve a `MyType` value from a `Value`.
-    pub fn from_other<T: 'static>(value: T) -> Value
+    pub fn from_other<T>(value: T) -> Value
     where
-        T: Display + Debug,
+        T: Display + Debug + 'static,
     {
         Value::inner_from_data(DataRep::Other(Box::new(value)))
     }
@@ -1022,9 +1022,9 @@ impl Value {
     ///     let b = *color.blue();
     /// }
     /// ```
-    pub fn as_other<T: 'static>(&self) -> Option<Ref<'_, T>>
+    pub fn as_other<T>(&self) -> Option<Ref<'_, T>>
     where
-        T: Display + Debug + FromStr,
+        T: Display + Debug + FromStr + 'static,
     {
         // FIRST, if we have the desired type, return it.
         let r = self.inner.data_rep.borrow();
@@ -1086,9 +1086,9 @@ impl Value {
     ///     let b = color.blue();
     /// }
     /// ```
-    pub fn as_copy<T: 'static>(&self) -> Option<T>
+    pub fn as_copy<T>(&self) -> Option<T>
     where
-        T: Display + Debug + FromStr + Copy,
+        T: Display + Debug + FromStr + Copy + 'static,
     {
         // FIRST, if we have the desired type, return it.
         if let DataRep::Other(other) = &*self.inner.data_rep.borrow() {
@@ -1451,7 +1451,7 @@ mod tests {
         assert_eq!(Value::get_float("1"), Ok(1.0));
         assert_eq!(Value::get_float("2.3"), Ok(2.3));
         assert_eq!(Value::get_float(" 4.5 "), Ok(4.5));
-        assert_eq!(Value::get_float("Inf"), Ok(std::f64::INFINITY));
+        assert_eq!(Value::get_float("Inf"), Ok(f64::INFINITY));
 
         assert_eq!(
             Value::get_float("abc"),

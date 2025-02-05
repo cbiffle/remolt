@@ -67,7 +67,6 @@ use std::path::PathBuf;
 ///     eprintln!("Usage: mytest *filename.tcl");
 /// }
 /// ```
-
 #[allow(clippy::result_unit_err)]
 pub fn test_harness(interp: &mut Interp, args: &[String]) -> Result<(), ()> {
     // FIRST, announce who we are.

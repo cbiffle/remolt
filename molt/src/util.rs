@@ -74,7 +74,6 @@ pub fn to_uppercase(s: &str) -> String {
 /// ## Notes
 ///
 /// * The resulting string has the form of an integer, but might be out of the valid range.
-
 pub fn read_int(ptr: &mut Tokenizer) -> Option<String> {
     let mut p = ptr.clone();
     let mut result = String::new();

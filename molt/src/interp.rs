@@ -442,11 +442,14 @@ enum Command {
     Native(CommandFunc),
 
     #[cfg(feature = "closure-commands")]
-    Closure(Box<dyn Fn(&mut Interp, &[Value]) -> Result<Option<Value>, Exception>>),
+    Closure(BoxedClosure),
 
     /// A Molt procedure
     Proc(Procedure),
 }
+
+#[cfg(feature = "closure-commands")]
+type BoxedClosure  = Box<dyn Fn(&mut Interp, &[Value]) -> Result<Option<Value>, Exception>>;
 
 impl Command {
     /// Execute the command according to its kind.
@@ -507,7 +510,6 @@ impl Interp {
     /// let mut interp = Interp::empty();
     /// assert!(interp.command_names().is_empty());
     /// ```
-
     pub fn empty() -> Self {
         let mut interp = Self {
             recursion_limit: 1000,
@@ -667,7 +669,6 @@ impl Interp {
     ///    }
     /// }
     /// ```
-
     pub fn eval(&mut self, script: &str) -> MoltResult {
         let value = Value::from(script.to_owned());
         self.eval_value(&value)
@@ -914,7 +915,6 @@ impl Interp {
     /// assert!(interp.complete("set a [expr {1+1}]"));
     /// assert!(!interp.complete("set a [expr {1+1"));
     /// ```
-
     pub fn complete(&mut self, script: &str) -> bool {
         parser::parse(script).is_ok()
     }
@@ -1424,10 +1424,10 @@ impl Interp {
         self.scopes.current()
     }
 
-    ///-----------------------------------------------------------------------------------
-    /// Array Manipulation Methods
-    ///
-    /// These provide the infrastructure for the `array` command.
+    //-----------------------------------------------------------------------------------
+    // Array Manipulation Methods
+    //
+    // These provide the infrastructure for the `array` command.
 
     /// Unsets an array variable givee its name.  Nothing happens if the variable doesn't
     /// exist, or if the variable is not an array variable.

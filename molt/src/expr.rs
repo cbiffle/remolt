@@ -857,7 +857,6 @@ fn expr_get_value(interp: &mut Interp, info: &mut ExprInfo, prec: i32) -> DatumR
 /// executing an embedded command.  On success, info.token is set to the last token type,
 /// and info is updated to point to the next token.  If the token is VALUE, the returned
 /// Datum contains it.
-
 fn expr_lex(interp: &mut Interp, info: &mut ExprInfo) -> DatumResult {
     // FIRST, skip white space.
     let mut p = info.expr.clone();
