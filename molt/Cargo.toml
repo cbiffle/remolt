@@ -1,9 +1,9 @@
 [package]
 name = "remolt"
 version = "0.3.2"
-authors = ["Will Duquette <will@wjduquette.com>"]
+authors = ["Will Duquette <will@wjduquette.com>", "Cliff L. Biffle <code@cliffle.com>"]
 edition = "2021"
-description = "Embeddable TCL interpreter for Rust applications"
+description = "Embeddable TCL-ish interpreter for Rust applications"
 license = "BSD-3-Clause"
 readme = "README.md"
 keywords = ["language", "script", "scripting", "tcl"]
