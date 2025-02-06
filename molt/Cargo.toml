@@ -1,6 +1,6 @@
 [package]
 name = "remolt"
-version = "0.3.2"
+version = "0.1.0"
 authors = ["Will Duquette <will@wjduquette.com>", "Cliff L. Biffle <code@cliffle.com>"]
 edition = "2021"
 description = "Embeddable TCL-ish interpreter for Rust applications"

@@ -1,6 +1,6 @@
 [package]
 name = "remolt-shell"
-version = "0.3.2"
+version = "0.1.0"
 authors = ["Will Duquette <will@wjduquette.com>"]
 edition = "2021"
 description = "Remolt Application Frameworks"
@@ -9,5 +9,5 @@ readme = "README.md"
 keywords = ["language", "script", "scripting", "tcl"]
 
 [dependencies]
-remolt = { version = "0.3.1", path = "../molt" }
+remolt = { version = "0.1.0", path = "../molt" }
 rustyline = "5.0.0"
